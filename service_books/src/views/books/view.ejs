@@ -1,0 +1,91 @@
+<%- include('../partials/layout-start', {title: title}) %>
+<%- include('../partials/menu') %>
+
+<h1><%= title %></h1>
+
+<div class="row">
+    <div class="col-sm-8">
+        <div class="card">
+            <div class="card-body">
+
+                <h5 class="card-title"><%= book.title %></h5>
+
+                <table class="table">
+                    <tbody>
+                      <tr>
+                       <td>Обложка</td>
+                       <td><img style="width:300px;" src="/..<%= book.fileCover.replace('public', '') %>"></td>
+                     </tr>
+                      <tr>
+                        <td>Описание</td>
+                        <td><%= book.description %></td>
+                      </tr>
+                      <tr>
+                        <td>Авторы</td>
+                        <td><%= book.authors %></td>
+                      </tr>
+                      <tr>
+                        <td>Рекомендуемая</td>
+                        <td><%= book.favorite==true || book.favorite=='true' ? 'Да' : 'Нет' %></td>
+                      </tr>
+                      <tr>
+                        <td>Полный путь</td>
+                        <td><%= book.fileBook %></td>
+                      </tr>  
+                      <tr>
+                        <td>Название файла</td>
+                        <td><%= book.fileName %></td>
+                      </tr>
+                      <tr>
+                        <td>Количество просмотров</td>
+                        <td><%= cnt %></td>
+                      </tr>
+                    </tbody>
+                </table>
+
+                <div class="text-end">
+                    <a class="btn btn-sm btn-primary" href="/books/update/<%= book.id %>">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                    </a>
+                    <form action="/api/books/delete/<%= book.id %>" id="form-delete" method="POST" class="d-inline">
+                        <button class="btn btn-sm btn-danger">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const ajaxSend = async (formData) => {
+        const response = await fetch("http://localhost:3000/api/books/<%= book.id %>", {
+            method: "DELETE",
+        });
+        if (!response.ok) {
+            throw new Error(`Ошибка по адресу ${url}, статус ошибки ${response.status}`);
+        }
+        return await response.text();
+    };
+
+    const form = document.querySelector("#form-delete");
+    if (form) {
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            ajaxSend(formData)
+                .then((response) => {
+                    console.log(response);
+                    const result = JSON.parse(response);
+                    if (result.success === "ok") {
+                        window.location.replace("/books");
+                        form.reset(); // очищаем поля формы
+                    }
+                })
+                .catch((err) => console.error(err))
+        });
+    }
+</script>
+<%- include('../partials/layout-end') %>

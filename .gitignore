@@ -1,0 +1,5 @@
+*/node_modules
+service_counter/data
+*/package-lock.json
+.env
+.idea

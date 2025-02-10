@@ -1,0 +1,29 @@
+{
+  "name": "ejs",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon -L"
+  },
+  "author": "axer665",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "express-session": "^1.17.2",
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^11.0.3",
+    "ejs": "^3.1.10",
+    "mongoose": "^6.0.10",
+    "cookie-parser": "^1.4.5",
+    "passport": "^0.5.0",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "keywords": []
+}

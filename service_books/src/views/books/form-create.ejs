@@ -1,0 +1,106 @@
+<form method="POST" action="/api/books" class="mt-5" id="form">
+    <div class="form-group mb-3">
+        Обложка: <br/>
+        <img id="preview" style="display: none;" />
+    </div>
+
+    <div class="input-group mb-3">
+        <label class="input-group-text" for="inputGroupFileCover">Загрузить обложку</label>
+        <input type="file" name="filecover" class="form-control" id="inputGroupFileCover">
+    </div>
+
+    <div class="form-group">
+        <label for="inputTitle">Заголовок</label>
+        <input
+            required
+            type="text"
+            name="title"
+            class="form-control"
+            id="inputTitle">
+    </div>
+
+    <div class="form-group">
+        <label for="inputDesc">Описание</label>
+        <textarea
+            rows="3"
+            name="description"
+            class="form-control"
+            id="inputDesc"
+        ></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="inputAuthors">Авторы</label>
+        <input type="text"
+               name="authors"
+               class="form-control"
+               id="inputAuthors">
+    </div>
+ 
+    <div class="form-group">
+        <label for="inputFavorite">Рекомендуемая</label>
+        <select name="favorite" class="form-control" id="inputFavorite">>
+            <option value="true">Да</option>
+            <option value="false">Нет</option>
+        </select>
+    </div>
+
+    <div class="input-group mb-3">
+        <label class="input-group-text" for="inputGroupFile">Загрузить книгу</label>
+        <input type="file" name="filebook" required class="form-control" id="inputGroupFile">
+    </div>
+
+    <div class="form-group text-right ">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </div>
+    
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const ajaxSend = async (formData) => {
+            const response = await fetch("http://localhost:3000/api/books", {
+                method: "POST",
+                body: formData
+            });
+            if (!response.ok) {
+                throw new Error(`Ошибка по адресу ${url}, статус ошибки ${response.status}`);
+            }
+            return await response.text();
+        };
+
+        const form = document.querySelector("#form");
+        if (form) {
+            form.addEventListener("submit", function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                console.log(formData);
+
+                ajaxSend(formData)
+                    .then((response) => {
+                        console.log(response);
+                        window.location.replace("/books");
+                        form.reset(); // очищаем поля формы
+                    })
+                    .catch((err) => console.error(err))
+            });
+        }
+
+        document.getElementById('inputGroupFileCover').onchange = function(event) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var output = document.getElementById('preview');
+                output.src = reader.result;
+                output.style.display = 'block';
+                output.style.width = '300px';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        };
+    });
+</script>
+<style>
+.form-group {
+  margin-bottom: 1rem;
+}
+</style>

@@ -1,0 +1,62 @@
+services:
+  mongodb:
+    image: mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_PASSWORD}
+      - MONGO_INITDB_DATABASE=${DB_NAME}
+    volumes:
+      - ./data_service_books:/data/db
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${DB_USERNAME}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${DB_PASSWORD}
+      - ME_CONFIG_BASICAUTH_USERNAME=${MONGOEXPRESS_LOGIN}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${MONGOEXPRESS_PASSWORD}
+    depends_on:
+      - mongodb
+
+  storage:
+    image: redis
+    volumes:
+      - ./data_service_counter:/data
+
+  counter:
+    build: 
+      context: ./service_counter/
+      dockerfile: ./Dockerfile
+    environment:
+      - PORT=3003
+      - REDIS_URL=redis://storage
+    ports:
+      - 3003:3003
+    depends_on:
+      - storage        
+  books:
+    build: 
+      context: ./service_books/
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./service_books/public:/app/public
+      - ./service_books/src:/app/src
+    environment:
+      - PORT=3002
+      - COUNTER_PORT=3001
+      - COUNTER_URL=${COUNTER_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_ATLAS_USERNAME=${DB_ATLAS_USERNAME}
+      - DB_ATLAS_PASSWORD=${DB_ATLAS_PASSWORD}
+      - DB_ATLAS_NAME=${DB_ATLAS_NAME}
+    ports:
+      - 3000:3002
+    depends_on:
+      - counter
