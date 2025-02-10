@@ -22,7 +22,8 @@ POST /api/user/signup
 - Каталог проекта: service_books
 - Т.к. в структуре моего проекта api отвечает только за запрос к серверу, то routing немного отличается от того, который есть в задаче:
 ```
-GET /user/login   страница с формой входа / регистрации
+GET /user/login   страница с формой входа 
+GET /user/signup  страница с формой регистрации
 GET /user/me      страница профиля
 POST /api/user/login
 POST /api/user/signup
